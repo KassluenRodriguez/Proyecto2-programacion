@@ -1,84 +1,128 @@
-#pragma once
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <iostream>
+using namespace std;
+using namespace sf;
 
 class PuntoConNombre {
 public:
-    PuntoConNombre() : posicion(0, 0), color(sf::Color::White), nombre(""), fuente(nullptr) {} 
-    PuntoConNombre(const sf::Vector2f& pos, const sf::Color& col, const std::string& nom, const sf::Font& font)
+    PuntoConNombre() : posicion(0, 0), color(Color::White), nombre(""), fuente(nullptr) {}
+    PuntoConNombre(const Vector2f& pos, const Color& col, const string& nom, const Font& font)
         : posicion(pos), color(col), nombre(nom), fuente(&font) {
         punto.setRadius(5);
         punto.setFillColor(color);
-        punto.setPosition(pos - sf::Vector2f(5, 5));
+        punto.setPosition(pos - Vector2f(5, 5));
 
         texto.setFont(font);
         texto.setString(nombre);
         texto.setCharacterSize(14);
-        texto.setFillColor(sf::Color::Black);
-        texto.setPosition(pos + sf::Vector2f(10, -5));
+        texto.setFillColor(Color::Black);
+        texto.setPosition(pos + Vector2f(10, -5));
     }
 
-    void dibujar(sf::RenderWindow& window) const {
+    Color getFillColor() const {
+        return color;
+    }
+
+    void dibujar(RenderWindow& window) const {
         window.draw(punto);
         window.draw(texto);
     }
 
+    Vector2f getPosition() const {
+        return posicion;
+    }
+
 private:
-    sf::Vector2f posicion;
-    sf::Color color;
-    std::string nombre;
-    const sf::Font* fuente;
-    sf::CircleShape punto;
-    sf::Text texto;
+    Vector2f posicion;
+    Color color;
+    string nombre;
+    const Font* fuente;
+    CircleShape punto;
+    Text texto;
 };
 
-class Node {
+// Nodo para almacenar cada punto turístico
+class NodoRuta {
 public:
-    PuntoConNombre puntos;
-    Node* next;
+    PuntoConNombre punto;
+    NodoRuta* siguiente;
+    NodoRuta* anterior;
 
-    Node(PuntoConNombre punto) : puntos(punto), next(nullptr) {}
+    NodoRuta(const PuntoConNombre& punto)
+        : punto(punto), siguiente(nullptr), anterior(nullptr) {}
 };
 
-class Rutas {
-private:
-    Node* head;
-
+// Lista doblemente enlazada para una ruta (con múltiples puntos)
+class Ruta {
 public:
-    Rutas() : head(nullptr) {}
+    NodoRuta* cabeza;
+    NodoRuta* cola;
 
-    // Método para añadir una nueva ruta (punto) al final de la lista enlazada
-    void nuevaRuta(const PuntoConNombre& punto) {
-        Node* nuevoNodo = new Node(punto);
+    Ruta() : cabeza(nullptr), cola(nullptr) {}
 
-        if (!head) {
-            head = nuevoNodo;
+    void agregarPunto(const PuntoConNombre& punto) {
+        NodoRuta* nuevoNodo = new NodoRuta(punto);
+
+        if (!cabeza) {
+            cabeza = cola = nuevoNodo;  // Si la lista está vacía, el primer nodo es cabeza y cola
         }
         else {
-            Node* actual = head;
-            while (actual->next) {
-                actual = actual->next;
-            }
-            actual->next = nuevoNodo;
+            cola->siguiente = nuevoNodo;
+            nuevoNodo->anterior = cola;
+            cola = nuevoNodo;
         }
     }
 
-    // Método para dibujar todos los puntos de la lista enlazada
-    void dibujar(sf::RenderWindow& window) const {
-        Node* actual = head;
+    void dibujar(RenderWindow& ventana) const {
+        NodoRuta* actual = cabeza;
         while (actual) {
-            actual->puntos.dibujar(window);
-            actual = actual->next;
+            actual->punto.dibujar(ventana);
+            actual = actual->siguiente;
         }
     }
 
-    // Destructor para liberar la memoria
-    ~Rutas() {
-        Node* actual = head;
+    void unirPuntos(RenderWindow& ventana) const {
+        NodoRuta* actual = cabeza;
+        while (actual && actual->siguiente) {
+            Vector2f pos1 = actual->punto.getPosition();
+            Vector2f pos2 = actual->siguiente->punto.getPosition();
+
+            // Calcular distancia correctamente (usando la raíz cuadrada)
+            float distancia = distanciaManualmente(pos1, pos2);
+
+            // Calcular ángulo correctamente usando atan2
+            float angulo = anguloManualmente(pos1, pos2);
+
+            RectangleShape linea(Vector2f(distancia, 3));
+            linea.setPosition(pos1);
+            linea.setRotation(angulo);
+            linea.setFillColor(Color::Black);
+
+            ventana.draw(linea);
+            actual = actual->siguiente;
+        }
+    }
+
+    // Método para calcular distancia manualmente (sin sqrt)
+    float distanciaManualmente(const Vector2f& pos1, const Vector2f& pos2) const {
+        float dx = pos2.x - pos1.x;
+        float dy = pos2.y - pos1.y;
+        return sqrt(dx * dx + dy * dy);  
+    }
+
+    // Método para calcular ángulo manualmente (sin atan2)
+    float anguloManualmente(const Vector2f& pos1, const Vector2f& pos2) const {
+        float dx = pos2.x - pos1.x;
+        float dy = pos2.y - pos1.y;
+        return atan2(dy, dx) * (180.0f / 3.14159f);  
+    }
+
+    ~Ruta() {
+        NodoRuta* actual = cabeza;
         while (actual) {
-            Node* temp = actual;
-            actual = actual->next;
+            NodoRuta* temp = actual;
+            actual = actual->siguiente;
             delete temp;
         }
     }
