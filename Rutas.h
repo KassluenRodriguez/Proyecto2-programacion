@@ -55,7 +55,8 @@ public:
     NodoRuta* anterior;
 
     NodoRuta(const PuntoConNombre& punto)
-        : punto(punto), siguiente(nullptr), anterior(nullptr) {}
+        : punto(punto), siguiente(nullptr), anterior(nullptr) {
+    }
 };
 
 
@@ -96,7 +97,7 @@ public:
                     cola = actual->anterior;
                 }
                 delete actual;
-                return; 
+                return;
             }
             actual = actual->siguiente;
         }
@@ -124,7 +125,7 @@ public:
             actual = actual->siguiente;
         }
 
-        if (numPuntos < 2) return; 
+        if (numPuntos < 2) return;
 
         sf::VertexArray curva(sf::LinesStrip);
 
