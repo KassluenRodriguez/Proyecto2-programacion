@@ -3,7 +3,7 @@
 
 int main() {
     try {
-        MapaTuristico mapa("imagen/mapa2.jpg","fuentes/NostalgicWhispers-Regular.ttf");
+        MapaTuristico mapa("imagen/gta.jpg", "fuentes/NostalgicWhispers-Regular.ttf");
         mapa.run();
     }
     catch (const std::exception& e) {
@@ -11,6 +11,6 @@ int main() {
         return -1;
     }
 
-return 0;
+    return 0;
 
 }
