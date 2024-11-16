@@ -151,6 +151,7 @@ sfml-graphics.lib;%(AdditionalDependencies)</AdditionalDependencies>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Mapa.h" />
+    <ClInclude Include="Puntos.h" />
     <ClInclude Include="Rutas.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

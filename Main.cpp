@@ -1,9 +1,17 @@
+
+#include <SFML/Graphics.hpp>
 #include "Mapa.h"
-#include <iostream>
 
 int main() {
+    // Ruta a los archivos del mapa y la fuente
+    std::string mapaFile = "imagen/gta.jpg";
+    std::string fontFile = "fuentes/NostalgicWhispers-Regular.ttf";
+
     try {
-        MapaTuristico mapa("imagen/gta.jpg", "fuentes/NostalgicWhispers-Regular.ttf");
+        // Crear una instancia de MapaTuristico
+        MapaTuristico mapa(mapaFile, fontFile);
+
+        // Ejecutar el programa
         mapa.run();
     }
     catch (const std::exception& e) {
@@ -12,5 +20,4 @@ int main() {
     }
 
     return 0;
-
 }
