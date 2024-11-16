@@ -3,15 +3,15 @@
 #include "Mapa.h"
 
 int main() {
-    // Ruta a los archivos del mapa y la fuente
+   
     std::string mapaFile = "imagen/gta.jpg";
     std::string fontFile = "fuentes/NostalgicWhispers-Regular.ttf";
 
     try {
-        // Crear una instancia de MapaTuristico
+       
         MapaTuristico mapa(mapaFile, fontFile);
 
-        // Ejecutar el programa
+       
         mapa.run();
     }
     catch (const std::exception& e) {

@@ -1,9 +1,11 @@
 
+
+
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <string>
 #include "Rutas.h"
-#include <list>
+#include "RutasEnlazadas.h"
 
 using namespace std;
 using namespace sf;
@@ -25,8 +27,6 @@ private:
     void activarModoEdicion();
     void seleccionarPunto(const Vector2f& pos);
     void eliminarRuta();
-        
-
 
     RenderWindow window;
     Texture mapaTexture;
@@ -35,13 +35,13 @@ private:
     Color colorSeleccionado;
     View view;
 
-    ListaRutas rutas;
+    ListaEnlazada<Ruta*> rutas; // Uso de ListaEnlazada 
 
     RectangleShape paleta[6];
     Color colores[6];
     Text nombresRutas[100];
 
-    int contadorPuntos = 1 ;
+    int contadorPuntos = 1;
     int nombresRutasCount = 0;
     int contadorRutas = 1;
 
@@ -60,19 +60,8 @@ private:
     bool isDragging = false;
     Vector2f dragStartPos;
     float moveSpeed = 20.0f;
-
 };
 
-void MapaTuristico::run() {
-    while (window.isOpen()) {
-        manejarEventos();
-        window.clear();  
-
-        dibujar();  
-
-        window.display();  
-    }
-}
 
 
 MapaTuristico::MapaTuristico(const string& mapaFile, const string& fontFile)
@@ -121,8 +110,21 @@ MapaTuristico::MapaTuristico(const string& mapaFile, const string& fontFile)
     botonModoEdicion.setPosition(410, window.getSize().y - 50);
 
     botonEliminarRuta.setSize(Vector2f(150, 40));
-    botonEliminarRuta.setFillColor(Color::White);
-    botonEliminarRuta.setPosition(250, window.getSize().y - 100);
+    botonEliminarRuta.setFillColor(Color::Red);
+    botonEliminarRuta.setOutlineColor(Color::Black);
+    botonEliminarRuta.setOutlineThickness(2);
+    botonEliminarRuta.setPosition(Vector2f(700, 20));  // Posición inicial arbitraria, se ajustará dinámicamente
+
+    // Inicializar otros miembros si es necesario
+}
+
+void MapaTuristico::run() {
+    while (window.isOpen()) {
+        manejarEventos();
+        window.clear();
+        dibujar();
+        window.display();
+    }
 }
 
 void MapaTuristico::ajustarEscala() {
@@ -150,41 +152,60 @@ void MapaTuristico::manejarEventos() {
             Vector2f clickPos = window.mapPixelToCoords(Vector2i(event.mouseButton.x, event.mouseButton.y), view);
 
             if (event.mouseButton.button == Mouse::Left) {
-               
-                for (int i = 0; i < 6; ++i) {
-                    if (paleta[i].getGlobalBounds().contains(clickPos)) {
-                        colorSeleccionado = colores[i];
-                        return;
-                    }
+                if (rutaSeleccionada != nullptr) {
+                    // Eliminar la ruta seleccionada usando remove_if
+                    rutas.remove_if([this](Ruta* ruta) {
+                        return ruta == rutaSeleccionada;
+                        });
+                    rutaSeleccionada = nullptr;
+                    mostrarBotonEliminar = false;
                 }
+                else {
+                    for (int i = 0; i < 6; ++i) {
+                        if (paleta[i].getGlobalBounds().contains(clickPos)) {
+                            colorSeleccionado = colores[i];
+                            return;
+                        }
+                    }
 
-              
-                if (botonAgregarRuta.getGlobalBounds().contains(clickPos)) {
-                    agregarRuta();
-                }
-                else if (botonModoEdicion.getGlobalBounds().contains(clickPos)) {
-                    activarModoEdicion();
-                }
-                else if (mostrarBotonEliminar && botonEliminarRuta.getGlobalBounds().contains(clickPos)) {
-                    
-                    if (rutaSeleccionada) {
-                        rutas.eliminarRuta(rutaSeleccionada);
-                        rutaSeleccionada = nullptr;
-                        mostrarBotonEliminar = false; 
+                    if (botonAgregarRuta.getGlobalBounds().contains(clickPos)) {
+                        agregarRuta();
                     }
-                }
-                else if (modoEdicion) {
-                    seleccionarPunto(clickPos);
-                   
-                    mostrarBotonEliminar= (rutaSeleccionada != nullptr);
-                }
-                else if (sePuedeAgregarPunto && clickPos.y < 550) {
-                    agregarPunto(clickPos);
+                    else if (botonModoEdicion.getGlobalBounds().contains(clickPos)) {
+                        activarModoEdicion();
+                    }
+                    else if (modoEdicion) {
+                        seleccionarPunto(clickPos);
+                    }
+                    else if (sePuedeAgregarPunto && clickPos.y < 550) {
+                        agregarPunto(clickPos);
+                    }
                 }
             }
 
-            if (event.mouseButton.button == Mouse::Right && modoEdicion) {
-                eliminarPunto(clickPos);
+            if (event.mouseButton.button == Mouse::Right) {
+                if (rutaSeleccionada != nullptr) {
+                    // Eliminar punto de la ruta seleccionada
+                    rutaSeleccionada->eliminarPunto(clickPos);
+                }
+                else {
+                    // Seleccionar ruta al hacer clic derecho
+                    Nodo<Ruta*>* nodoRuta = rutas.begin();
+                    while (nodoRuta != nullptr) {
+                        Ruta* ruta = nodoRuta->dato;
+                        Nodo<PuntoConNombre>* nodoPunto = ruta->getPuntos().begin();
+                        while (nodoPunto != nullptr) {
+                            const PuntoConNombre& punto = nodoPunto->dato;
+                            if (punto.distanciaAlPunto(clickPos) < 5.0f) {
+                                rutaSeleccionada = ruta;
+                                mostrarBotonEliminar = true;
+                                return;
+                            }
+                            nodoPunto = nodoPunto->siguiente;
+                        }
+                        nodoRuta = nodoRuta->siguiente;
+                    }
+                }
             }
 
             dragStartPos = clickPos;
@@ -227,12 +248,6 @@ void MapaTuristico::manejarEventos() {
             view.setSize(newSize);
             view.setCenter(newSize * 0.5f);
             window.setView(view);
-
-            Vector2u textureSize = mapaTexture.getSize();
-            minZoomFactor = min(
-                static_cast<float>(newSize.x) / textureSize.x,
-                static_cast<float>(newSize.y) / textureSize.y
-            );
         }
     }
 
@@ -249,20 +264,22 @@ void MapaTuristico::manejarEventos() {
 
 
 void MapaTuristico::seleccionarPunto(const Vector2f& pos) {
-    rutaSeleccionada = nullptr; 
+    rutaSeleccionada = nullptr;
 
-    for (Ruta* ruta : rutas) {  
-        for (const PuntoConNombre& punto : ruta->getPuntos()) {  
-          
+    Nodo<Ruta*>* nodoRuta = rutas.begin();  // Iterar desde el inicio de la lista de rutas
+    while (nodoRuta != nullptr) {
+        Nodo<PuntoConNombre>* nodoPunto = nodoRuta->dato->getPuntos().begin();
+        while (nodoPunto != nullptr) {
+            const PuntoConNombre& punto = nodoPunto->dato;
             if (punto.distanciaAlPunto(pos) < 5.0f) {
-                rutaSeleccionada = ruta;  
-                return;  
+                rutaSeleccionada = nodoRuta->dato;
+                return;
             }
+            nodoPunto = nodoPunto->siguiente;
         }
+        nodoRuta = nodoRuta->siguiente;  // Avanzar al siguiente nodo de la lista
     }
 }
-
-
 
 void MapaTuristico::limitarVista() {
     Vector2f viewSize = view.getSize();
@@ -299,22 +316,23 @@ void MapaTuristico::limitarVista() {
 }
 
 void MapaTuristico::dibujar() {
-    window.setView(view); 
-    window.draw(mapaSprite);  
+    window.setView(view);
+    window.draw(mapaSprite);
 
-    
-    rutas.dibujar(window);
-
-    for (Ruta* ruta : rutas) {
+    Nodo<Ruta*>* nodoRuta = rutas.begin();  
+    while (nodoRuta != nullptr) {
+        Ruta* ruta = nodoRuta->dato;
+        ruta->dibujar(window);  
         if (modoEdicion && ruta == rutaSeleccionada) {
-            ruta->dibujarLineaCurva(window, Color::Green); 
+            ruta->dibujarLineaCurva(window, Color::Green);
         }
         else {
-            ruta->dibujarLineaCurva(window);  
+            ruta->dibujarLineaCurva(window);
         }
+        nodoRuta = nodoRuta->siguiente; 
     }
 
-    if (mostrarBotonEliminar) {
+    if (mostrarBotonEliminar && rutaSeleccionada != nullptr) {
         window.draw(botonEliminarRuta);
 
         Text textoBoton("Eliminar Ruta", font, 18);
@@ -322,6 +340,7 @@ void MapaTuristico::dibujar() {
         textoBoton.setPosition(botonEliminarRuta.getPosition().x + 10, botonEliminarRuta.getPosition().y + 10);
         window.draw(textoBoton);
     }
+
     for (int i = 0; i < 6; ++i) {
         window.draw(paleta[i]);
     }
@@ -333,7 +352,6 @@ void MapaTuristico::dibujar() {
     window.draw(botonAgregarRuta);
     window.draw(botonModoEdicion);
 
-    
     Text textoBoton("Agregar Ruta", font, 18);
     textoBoton.setFillColor(Color::Black);
     textoBoton.setPosition(botonAgregarRuta.getPosition().x + 10, botonAgregarRuta.getPosition().y + 10);
@@ -345,46 +363,6 @@ void MapaTuristico::dibujar() {
     window.draw(textoModoEdicion);
 }
 
-
-string MapaTuristico::mostrarCuadroDeDialogo() {
-    RenderWindow inputWindow(VideoMode(300, 100), "Nombre del Punto");
-    Text textoInput("", font, 20);
-    textoInput.setPosition(10, 10);
-    textoInput.setFillColor(Color::Black);
-
-   
-    string input = "Punto " + to_string(contadorPuntos)+ "";
-  
-    string tituloRuta = "Ruta " + to_string(contadorRutas); 
-    
-    while (inputWindow.isOpen()) {
-        Event event;
-        while (inputWindow.pollEvent(event)) {
-            if (event.type == Event::Closed) {
-                inputWindow.close();
-            }
-            else if (event.type == Event::TextEntered) {
-                if (event.text.unicode == '\b' && !input.empty()) {
-                    input.pop_back();
-                }
-                else if (event.text.unicode == '\r') {
-                    inputWindow.close();
-                }
-                else if (event.text.unicode < 128) {
-                    input += static_cast<char>(event.text.unicode);
-                }
-            }
-        }
-        textoInput.setString(tituloRuta + " - " + input); 
-        inputWindow.clear(Color::White);
-        inputWindow.draw(textoInput);
-        inputWindow.display();
-    }
-    return input;
-}
-
-
-
 void MapaTuristico::agregarPunto(const Vector2f& pos) {
     string nombrePunto = mostrarCuadroDeDialogo();
 
@@ -392,15 +370,21 @@ void MapaTuristico::agregarPunto(const Vector2f& pos) {
         nombrePunto = "Punto " + to_string(contadorPuntos);
     }
 
-  
-    if (!rutas.empty()) {
+    
+    if (rutas.begin() != nullptr) {
         PuntoConNombre nuevoPunto(pos, colorSeleccionado, nombrePunto, font);
-        rutas.back()->agregarPunto(nuevoPunto);  
+
+       
+        Nodo<Ruta*>* ultimoNodo = rutas.begin();
+        while (ultimoNodo->siguiente != nullptr) {
+            ultimoNodo = ultimoNodo->siguiente;
+        }
+
+        ultimoNodo->dato->agregarPunto(nuevoPunto);  
     }
 
     contadorPuntos++;
 }
-
 
 void MapaTuristico::agregarRuta() {
     string nombreRuta = "Ruta " + to_string(contadorRutas);  
@@ -426,19 +410,92 @@ void MapaTuristico::agregarRuta() {
     contadorRutas++;
 }
 
+string MapaTuristico::mostrarCuadroDeDialogo() {
+    RenderWindow inputWindow(VideoMode(300, 100), "Nombre del Punto");
+    Text textoInput("", font, 20);
+    textoInput.setPosition(10, 10);
+    textoInput.setFillColor(Color::Black);
+
+   
+    string input = "Punto " + to_string(contadorPuntos);
+    string tituloRuta = "Ruta " + to_string(contadorRutas);  
+
+    while (inputWindow.isOpen()) {
+        Event event;
+        while (inputWindow.pollEvent(event)) {
+            if (event.type == Event::Closed) {
+                inputWindow.close();
+            }
+            else if (event.type == Event::TextEntered) {
+                if (event.text.unicode == '\b' && !input.empty()) {
+                    input.pop_back();  
+                }
+                else if (event.text.unicode == '\r') {
+                    inputWindow.close();  
+                }
+                else if (event.text.unicode < 128) {
+                    input += static_cast<char>(event.text.unicode);  
+                }
+            }
+        }
+        textoInput.setString(tituloRuta + " - " + input);  
+        inputWindow.clear(Color::White);
+        inputWindow.draw(textoInput);
+        inputWindow.display();
+    }
+    return input;  
+}
 
 void MapaTuristico::eliminarRuta() {
     if (rutaSeleccionada != nullptr) {
-        rutas.eliminarRuta(rutaSeleccionada); 
-        delete rutaSeleccionada;        
-        rutaSeleccionada = nullptr;     
-        mostrarBotonEliminar = false;     
+        Nodo<Ruta*>* nodoRuta = rutas.getCabeza();  
+        Nodo<Ruta*>* nodoPrevio = nullptr;
+
+        
+        while (nodoRuta != nullptr) {
+            if (nodoRuta->dato == rutaSeleccionada) {
+               
+                if (nodoPrevio != nullptr) {
+                    nodoPrevio->siguiente = nodoRuta->siguiente; 
+                }
+                else {
+                  
+                    rutas.setCabeza(nodoRuta->siguiente); 
+                }
+
+                if (nodoRuta == rutas.getCola()) {
+                   
+                    rutas.setCola(nodoPrevio);  
+                }
+
+                
+                delete nodoRuta->dato;  
+                delete nodoRuta;  
+                rutaSeleccionada = nullptr;  
+                mostrarBotonEliminar = false;  
+                return;
+            }
+
+          
+            nodoPrevio = nodoRuta;
+            nodoRuta = nodoRuta->siguiente;
+        }
     }
 }
 
 
+
+
+
+
 void MapaTuristico::eliminarPunto(const Vector2f& pos) {
-    rutas.eliminarPunto(pos);
+    Nodo<Ruta*>* nodoRuta = rutas.begin();
+
+  
+    while (nodoRuta != nullptr) {
+        nodoRuta->dato->eliminarPunto(pos);
+        nodoRuta = nodoRuta->siguiente;
+    }
 }
 
 void MapaTuristico::activarModoEdicion() {
