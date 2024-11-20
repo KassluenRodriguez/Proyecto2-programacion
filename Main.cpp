@@ -1,3 +1,4 @@
+
 #include <SFML/Graphics.hpp>
 #include "Mapa.h"
 
@@ -8,8 +9,10 @@ int main() {
 
     try {
 
+       
         MapaTuristico mapa(mapaFile, fontFile);
 
+       
 
         mapa.run();
     }
@@ -19,4 +22,6 @@ int main() {
     }
 
     return 0;
+
 }
+

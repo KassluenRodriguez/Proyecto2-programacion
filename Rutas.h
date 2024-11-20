@@ -149,4 +149,6 @@ void Ruta::dibujarLineaCurva(sf::RenderWindow& window, const sf::Color& color) {
 
 const ListaEnlazada<PuntoConNombre>& Ruta::getPuntos() const {
     return puntos;
+
 }
+

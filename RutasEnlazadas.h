@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include <iostream>
@@ -26,7 +27,7 @@ public:
     Nodo<T>* begin() const;
     Nodo<T>* end() const;
 
-    // Métodos de acceso a cabeza y cola
+    // MÃ©todos de acceso a cabeza y cola
     Nodo<T>* getCabeza() const { return cabeza; }
     void setCabeza(Nodo<T>* nuevoCabeza) { cabeza = nuevoCabeza; }
     Nodo<T>* getCola() const { return cola; }
@@ -112,3 +113,6 @@ template <typename T>
 Nodo<T>* ListaEnlazada<T>::end() const {
     return nullptr;
 }
+
+
+
