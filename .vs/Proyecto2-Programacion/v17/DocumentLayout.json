@@ -3,8 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\Albin\\OneDrive\\Escritorio\\todo\\U\\2do cuatri\\Progra I (2do intento)\\Proyecto2-programacion\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{2C569FC3-100F-44A8-B86C-8A1D32D9768D}|Proyecto2-Programacion.vcxproj|C:\\Users\\Albin\\OneDrive\\Escritorio\\todo\\U\\2do cuatri\\Progra I (2do intento)\\Proyecto2-programacion\\Main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{2C569FC3-100F-44A8-B86C-8A1D32D9768D}|Proyecto2-Programacion.vcxproj|solutionrelative:Main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{2C569FC3-100F-44A8-B86C-8A1D32D9768D}|Proyecto2-Programacion.vcxproj|C:\\Users\\Albin\\OneDrive\\Escritorio\\todo\\U\\2do cuatri\\Progra I (2do intento)\\Proyecto2-programacion\\Nodo.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2C569FC3-100F-44A8-B86C-8A1D32D9768D}|Proyecto2-Programacion.vcxproj|solutionrelative:Nodo.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2C569FC3-100F-44A8-B86C-8A1D32D9768D}|Proyecto2-Programacion.vcxproj|C:\\Users\\Albin\\OneDrive\\Escritorio\\todo\\U\\2do cuatri\\Progra I (2do intento)\\Proyecto2-programacion\\ListaEnlazada.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2C569FC3-100F-44A8-B86C-8A1D32D9768D}|Proyecto2-Programacion.vcxproj|solutionrelative:ListaEnlazada.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2C569FC3-100F-44A8-B86C-8A1D32D9768D}|Proyecto2-Programacion.vcxproj|C:\\Users\\Albin\\OneDrive\\Escritorio\\todo\\U\\2do cuatri\\Progra I (2do intento)\\Proyecto2-programacion\\RutasEnlazadas.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2C569FC3-100F-44A8-B86C-8A1D32D9768D}|Proyecto2-Programacion.vcxproj|solutionrelative:RutasEnlazadas.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2C569FC3-100F-44A8-B86C-8A1D32D9768D}|Proyecto2-Programacion.vcxproj|C:\\Users\\Albin\\OneDrive\\Escritorio\\todo\\U\\2do cuatri\\Progra I (2do intento)\\Proyecto2-programacion\\ManejodeArchivos.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2C569FC3-100F-44A8-B86C-8A1D32D9768D}|Proyecto2-Programacion.vcxproj|solutionrelative:ManejodeArchivos.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{2C569FC3-100F-44A8-B86C-8A1D32D9768D}|Proyecto2-Programacion.vcxproj|C:\\Users\\Albin\\OneDrive\\Escritorio\\todo\\U\\2do cuatri\\Progra I (2do intento)\\Proyecto2-programacion\\Rutas.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -13,6 +25,10 @@
     {
       "AbsoluteMoniker": "D:0:0:{2C569FC3-100F-44A8-B86C-8A1D32D9768D}|Proyecto2-Programacion.vcxproj|C:\\Users\\Albin\\OneDrive\\Escritorio\\todo\\U\\2do cuatri\\Progra I (2do intento)\\Proyecto2-programacion\\Mapa.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{2C569FC3-100F-44A8-B86C-8A1D32D9768D}|Proyecto2-Programacion.vcxproj|solutionrelative:Mapa.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2C569FC3-100F-44A8-B86C-8A1D32D9768D}|Proyecto2-Programacion.vcxproj|C:\\Users\\Albin\\OneDrive\\Escritorio\\todo\\U\\2do cuatri\\Progra I (2do intento)\\Proyecto2-programacion\\Main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2C569FC3-100F-44A8-B86C-8A1D32D9768D}|Proyecto2-Programacion.vcxproj|solutionrelative:Main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,7 +38,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 7,
           "Children": [
             {
               "$type": "Bookmark",
@@ -42,39 +58,91 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ManejodeArchivos.h",
+              "DocumentMoniker": "C:\\Users\\Albin\\OneDrive\\Escritorio\\todo\\U\\2do cuatri\\Progra I (2do intento)\\Proyecto2-programacion\\ManejodeArchivos.h",
+              "RelativeDocumentMoniker": "ManejodeArchivos.h",
+              "ToolTip": "C:\\Users\\Albin\\OneDrive\\Escritorio\\todo\\U\\2do cuatri\\Progra I (2do intento)\\Proyecto2-programacion\\ManejodeArchivos.h",
+              "RelativeToolTip": "ManejodeArchivos.h",
+              "ViewState": "AgIAACEAAAAAAAAAAAAAACUAAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-11-20T06:37:22.477Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "RutasEnlazadas.h",
+              "DocumentMoniker": "C:\\Users\\Albin\\OneDrive\\Escritorio\\todo\\U\\2do cuatri\\Progra I (2do intento)\\Proyecto2-programacion\\RutasEnlazadas.h",
+              "RelativeDocumentMoniker": "RutasEnlazadas.h",
+              "ToolTip": "C:\\Users\\Albin\\OneDrive\\Escritorio\\todo\\U\\2do cuatri\\Progra I (2do intento)\\Proyecto2-programacion\\RutasEnlazadas.h",
+              "RelativeToolTip": "RutasEnlazadas.h",
+              "ViewState": "AgIAAGQAAAAAAAAAAAAAAGkAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-11-20T06:36:40.999Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "ListaEnlazada.h",
+              "DocumentMoniker": "C:\\Users\\Albin\\OneDrive\\Escritorio\\todo\\U\\2do cuatri\\Progra I (2do intento)\\Proyecto2-programacion\\ListaEnlazada.h",
+              "RelativeDocumentMoniker": "ListaEnlazada.h",
+              "ToolTip": "C:\\Users\\Albin\\OneDrive\\Escritorio\\todo\\U\\2do cuatri\\Progra I (2do intento)\\Proyecto2-programacion\\ListaEnlazada.h",
+              "RelativeToolTip": "ListaEnlazada.h",
+              "ViewState": "AgIAAHwAAAAAAAAAAAAAAIAAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-11-20T06:36:02.202Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Nodo.h",
+              "DocumentMoniker": "C:\\Users\\Albin\\OneDrive\\Escritorio\\todo\\U\\2do cuatri\\Progra I (2do intento)\\Proyecto2-programacion\\Nodo.h",
+              "RelativeDocumentMoniker": "Nodo.h",
+              "ToolTip": "C:\\Users\\Albin\\OneDrive\\Escritorio\\todo\\U\\2do cuatri\\Progra I (2do intento)\\Proyecto2-programacion\\Nodo.h",
+              "RelativeToolTip": "Nodo.h",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAoAAAA1AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-11-20T06:35:20.515Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "Rutas.h",
               "DocumentMoniker": "C:\\Users\\Albin\\OneDrive\\Escritorio\\todo\\U\\2do cuatri\\Progra I (2do intento)\\Proyecto2-programacion\\Rutas.h",
               "RelativeDocumentMoniker": "Rutas.h",
               "ToolTip": "C:\\Users\\Albin\\OneDrive\\Escritorio\\todo\\U\\2do cuatri\\Progra I (2do intento)\\Proyecto2-programacion\\Rutas.h",
               "RelativeToolTip": "Rutas.h",
-              "ViewState": "AgIAAIUAAAAAAAAAAAAAAKMAAAACAAAAAAAAAA==",
+              "ViewState": "AgIAAIgAAAAAAAAAAAAAAJcAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2024-11-14T19:48:40.026Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 5,
               "Title": "Mapa.h",
               "DocumentMoniker": "C:\\Users\\Albin\\OneDrive\\Escritorio\\todo\\U\\2do cuatri\\Progra I (2do intento)\\Proyecto2-programacion\\Mapa.h",
               "RelativeDocumentMoniker": "Mapa.h",
               "ToolTip": "C:\\Users\\Albin\\OneDrive\\Escritorio\\todo\\U\\2do cuatri\\Progra I (2do intento)\\Proyecto2-programacion\\Mapa.h",
               "RelativeToolTip": "Mapa.h",
-              "ViewState": "AgIAAB4BAAAAAAAAAAAqwDABAAAUAAAAAAAAAA==",
+              "ViewState": "AgIAABQCAAAAAAAAAAAAABQCAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2024-11-14T19:48:38.982Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 6,
               "Title": "Main.cpp",
               "DocumentMoniker": "C:\\Users\\Albin\\OneDrive\\Escritorio\\todo\\U\\2do cuatri\\Progra I (2do intento)\\Proyecto2-programacion\\Main.cpp",
               "RelativeDocumentMoniker": "Main.cpp",
               "ToolTip": "C:\\Users\\Albin\\OneDrive\\Escritorio\\todo\\U\\2do cuatri\\Progra I (2do intento)\\Proyecto2-programacion\\Main.cpp",
               "RelativeToolTip": "Main.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAANAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-10-10T02:24:24.731Z",
               "EditorCaption": ""

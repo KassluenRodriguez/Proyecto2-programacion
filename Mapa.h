@@ -1,11 +1,11 @@
 
-
-
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <string>
 #include "Rutas.h"
+
 #include "RutasEnlazadas.h"
+
 
 using namespace std;
 using namespace sf;
@@ -27,6 +27,12 @@ private:
     void activarModoEdicion();
     void seleccionarPunto(const Vector2f& pos);
     void eliminarRuta();
+
+
+    // M√©todos de manejo de archivos
+    void guardarRutasEnArchivo(const string& nombreArchivo);
+    void cargarRutasDesdeArchivo(const string& nombreArchivo);
+
 
     RenderWindow window;
     Texture mapaTexture;
@@ -59,13 +65,13 @@ private:
     Vector2f desplazamiento;
     bool isDragging = false;
     Vector2f dragStartPos;
-    float moveSpeed = 20.0f;
+    float moveSpeed = 5.0f;
 };
 
 
 
 MapaTuristico::MapaTuristico(const string& mapaFile, const string& fontFile)
-    : window(VideoMode(800, 800), "Mapa TurÌstico"), colorSeleccionado(Color::Red), desplazamiento(0, 0) {
+    : window(VideoMode(800, 800), "Mapa Tur√≠stico"), colorSeleccionado(Color::Red), desplazamiento(0, 0) {
 
     if (!mapaTexture.loadFromFile(mapaFile)) {
         throw runtime_error("No se pudo cargar la textura del mapa");
@@ -113,10 +119,11 @@ MapaTuristico::MapaTuristico(const string& mapaFile, const string& fontFile)
     botonEliminarRuta.setFillColor(Color::Red);
     botonEliminarRuta.setOutlineColor(Color::Black);
     botonEliminarRuta.setOutlineThickness(2);
-    botonEliminarRuta.setPosition(Vector2f(700, 20));  // PosiciÛn inicial arbitraria, se ajustar· din·micamente
+    botonEliminarRuta.setPosition(Vector2f(700, 20));  // Posici√≥n inicial arbitraria, se ajustar√° din√°micamente
 
-    // Inicializar otros miembros si es necesario
-}
+
+    cargarRutasDesdeArchivo("rutas.txt");
+
 
 void MapaTuristico::run() {
     while (window.isOpen()) {
@@ -126,6 +133,16 @@ void MapaTuristico::run() {
         window.display();
     }
 }
+
+
+void MapaTuristico::guardarRutasEnArchivo(const string& nombreArchivo) {
+    ManejoDeArchivos::guardarRutas(rutas, nombreArchivo);
+}
+
+void MapaTuristico::cargarRutasDesdeArchivo(const string& nombreArchivo) {
+    ManejoDeArchivos::cargarRutas(rutas, nombreArchivo);
+}
+
 
 void MapaTuristico::ajustarEscala() {
     Vector2u windowSize = window.getSize();
@@ -153,12 +170,36 @@ void MapaTuristico::manejarEventos() {
 
             if (event.mouseButton.button == Mouse::Left) {
                 if (rutaSeleccionada != nullptr) {
-                    // Eliminar la ruta seleccionada usando remove_if
-                    rutas.remove_if([this](Ruta* ruta) {
-                        return ruta == rutaSeleccionada;
-                        });
-                    rutaSeleccionada = nullptr;
-                    mostrarBotonEliminar = false;
+
+                    
+                    Nodo<Ruta*>* nodoRuta = rutas.begin();
+                    Nodo<Ruta*>* nodoPrevio = nullptr;
+
+                   
+                    while (nodoRuta != nullptr) {
+                        if (nodoRuta->dato == rutaSeleccionada) {
+                           
+                            if (nodoPrevio == nullptr) {
+                                rutas.removeFirst(); 
+                            }
+                            else {
+                               
+                                nodoPrevio->siguiente = nodoRuta->siguiente;
+                                if (nodoRuta->siguiente != nullptr) {
+                                    nodoRuta->siguiente->anterior = nodoPrevio;
+                                }
+                            }
+
+                            
+                            delete rutaSeleccionada;
+                            rutaSeleccionada = nullptr;
+                            mostrarBotonEliminar = false;  
+                            break;
+                        }
+                        nodoPrevio = nodoRuta;
+                        nodoRuta = nodoRuta->siguiente;
+                    }
+
                 }
                 else {
                     for (int i = 0; i < 6; ++i) {
@@ -171,6 +212,12 @@ void MapaTuristico::manejarEventos() {
                     if (botonAgregarRuta.getGlobalBounds().contains(clickPos)) {
                         agregarRuta();
                     }
+
+                    else if (botonEliminarRuta.getGlobalBounds().contains(clickPos)) {
+                        eliminarRuta();
+                        guardarRutasEnArchivo("rutas.txt"); // Guardar cambios despu√©s de eliminar
+                    }
+
                     else if (botonModoEdicion.getGlobalBounds().contains(clickPos)) {
                         activarModoEdicion();
                     }
@@ -294,7 +341,7 @@ void MapaTuristico::limitarVista() {
     float textureWidth = static_cast<float>(mapaTexture.getSize().x);
     float textureHeight = static_cast<float>(mapaTexture.getSize().y);
 
-   
+
     if (viewSize.x > textureWidth) {
         left = 0;
         right = textureWidth;
@@ -306,7 +353,7 @@ void MapaTuristico::limitarVista() {
         viewCenter.y = textureHeight / 2;
     }
 
-  
+
     if (left < 0) viewCenter.x += -left;
     if (top < 0) viewCenter.y += -top;
     if (right > textureWidth) viewCenter.x -= (right - textureWidth);
@@ -319,17 +366,20 @@ void MapaTuristico::dibujar() {
     window.setView(view);
     window.draw(mapaSprite);
 
-    Nodo<Ruta*>* nodoRuta = rutas.begin();  
+
+    Nodo<Ruta*>* nodoRuta = rutas.begin();
     while (nodoRuta != nullptr) {
         Ruta* ruta = nodoRuta->dato;
-        ruta->dibujar(window);  
+        ruta->dibujar(window);
+
         if (modoEdicion && ruta == rutaSeleccionada) {
             ruta->dibujarLineaCurva(window, Color::Green);
         }
         else {
             ruta->dibujarLineaCurva(window);
         }
-        nodoRuta = nodoRuta->siguiente; 
+        nodoRuta = nodoRuta->siguiente;
+
     }
 
     if (mostrarBotonEliminar && rutaSeleccionada != nullptr) {
@@ -357,7 +407,7 @@ void MapaTuristico::dibujar() {
     textoBoton.setPosition(botonAgregarRuta.getPosition().x + 10, botonAgregarRuta.getPosition().y + 10);
     window.draw(textoBoton);
 
-    Text textoModoEdicion(modoEdicion ? "Modo EdiciÛn: Activado" : "Modo EdiciÛn: Desactivado", font, 18);
+    Text textoModoEdicion(modoEdicion ? "Modo Edici√≥n: Activado" : "Modo Edici√≥n: Desactivado", font, 18);
     textoModoEdicion.setFillColor(Color::Black);
     textoModoEdicion.setPosition(botonModoEdicion.getPosition().x + 10, botonModoEdicion.getPosition().y + 10);
     window.draw(textoModoEdicion);
@@ -370,28 +420,32 @@ void MapaTuristico::agregarPunto(const Vector2f& pos) {
         nombrePunto = "Punto " + to_string(contadorPuntos);
     }
 
-    
+
+
     if (rutas.begin() != nullptr) {
         PuntoConNombre nuevoPunto(pos, colorSeleccionado, nombrePunto, font);
 
-       
+
         Nodo<Ruta*>* ultimoNodo = rutas.begin();
         while (ultimoNodo->siguiente != nullptr) {
             ultimoNodo = ultimoNodo->siguiente;
         }
 
-        ultimoNodo->dato->agregarPunto(nuevoPunto);  
+        ultimoNodo->dato->agregarPunto(nuevoPunto);
     }
+
 
     contadorPuntos++;
 }
 
 void MapaTuristico::agregarRuta() {
-    string nombreRuta = "Ruta " + to_string(contadorRutas);  
 
-    
-    Ruta* nuevaRuta = new Ruta(nombreRuta);  
-    rutas.push_back(nuevaRuta);  
+    string nombreRuta = "Ruta " + to_string(contadorRutas);
+
+
+    Ruta* nuevaRuta = new Ruta(nombreRuta);
+    rutas.push_back(nuevaRuta);
+
     if (nombresRutasCount < 100) {
         Text rutaTexto(nombreRuta, font, 14);
         rutaTexto.setFillColor(Color::Black);
@@ -403,10 +457,12 @@ void MapaTuristico::agregarRuta() {
         nombresRutas[nombresRutasCount++] = rutaTexto;
     }
 
-   
+
+
     sePuedeAgregarPunto = true;
 
-    
+
+
     contadorRutas++;
 }
 
@@ -416,9 +472,11 @@ string MapaTuristico::mostrarCuadroDeDialogo() {
     textoInput.setPosition(10, 10);
     textoInput.setFillColor(Color::Black);
 
-   
+
+
     string input = "Punto " + to_string(contadorPuntos);
-    string tituloRuta = "Ruta " + to_string(contadorRutas);  
+    string tituloRuta = "Ruta " + to_string(contadorRutas);
+
 
     while (inputWindow.isOpen()) {
         Event event;
@@ -438,7 +496,9 @@ string MapaTuristico::mostrarCuadroDeDialogo() {
                 }
             }
         }
-        textoInput.setString(tituloRuta + " - " + input);  
+
+        textoInput.setString(tituloRuta + " - " + input);
+
         inputWindow.clear(Color::White);
         inputWindow.draw(textoInput);
         inputWindow.display();
@@ -448,35 +508,36 @@ string MapaTuristico::mostrarCuadroDeDialogo() {
 
 void MapaTuristico::eliminarRuta() {
     if (rutaSeleccionada != nullptr) {
-        Nodo<Ruta*>* nodoRuta = rutas.getCabeza();  
+
+        Nodo<Ruta*>* nodoRuta = rutas.getCabeza();
         Nodo<Ruta*>* nodoPrevio = nullptr;
 
-        
+
         while (nodoRuta != nullptr) {
             if (nodoRuta->dato == rutaSeleccionada) {
-               
+
                 if (nodoPrevio != nullptr) {
-                    nodoPrevio->siguiente = nodoRuta->siguiente; 
+                    nodoPrevio->siguiente = nodoRuta->siguiente;
                 }
                 else {
-                  
-                    rutas.setCabeza(nodoRuta->siguiente); 
+
+                    rutas.setCabeza(nodoRuta->siguiente);
                 }
 
                 if (nodoRuta == rutas.getCola()) {
-                   
-                    rutas.setCola(nodoPrevio);  
+
+                    rutas.setCola(nodoPrevio);
                 }
 
-                
-                delete nodoRuta->dato;  
-                delete nodoRuta;  
-                rutaSeleccionada = nullptr;  
-                mostrarBotonEliminar = false;  
+
+                delete nodoRuta->dato;
+                delete nodoRuta;
+                rutaSeleccionada = nullptr;
+                mostrarBotonEliminar = false;
                 return;
             }
 
-          
+
             nodoPrevio = nodoRuta;
             nodoRuta = nodoRuta->siguiente;
         }
@@ -484,14 +545,10 @@ void MapaTuristico::eliminarRuta() {
 }
 
 
-
-
-
-
 void MapaTuristico::eliminarPunto(const Vector2f& pos) {
     Nodo<Ruta*>* nodoRuta = rutas.begin();
 
-  
+
     while (nodoRuta != nullptr) {
         nodoRuta->dato->eliminarPunto(pos);
         nodoRuta = nodoRuta->siguiente;

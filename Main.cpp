@@ -3,15 +3,17 @@
 #include "Mapa.h"
 
 int main() {
-   
+
     std::string mapaFile = "imagen/gta.jpg";
     std::string fontFile = "fuentes/NostalgicWhispers-Regular.ttf";
 
     try {
+
        
         MapaTuristico mapa(mapaFile, fontFile);
 
        
+
         mapa.run();
     }
     catch (const std::exception& e) {
@@ -20,4 +22,6 @@ int main() {
     }
 
     return 0;
+
 }
+
