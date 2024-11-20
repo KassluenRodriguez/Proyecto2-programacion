@@ -1,9 +1,16 @@
+#include <SFML/Graphics.hpp>
 #include "Mapa.h"
-#include <iostream>
 
 int main() {
+
+    std::string mapaFile = "imagen/gta.jpg";
+    std::string fontFile = "fuentes/NostalgicWhispers-Regular.ttf";
+
     try {
-        MapaTuristico mapa("imagen/gta.jpg", "fuentes/NostalgicWhispers-Regular.ttf");
+
+        MapaTuristico mapa(mapaFile, fontFile);
+
+
         mapa.run();
     }
     catch (const std::exception& e) {
@@ -12,5 +19,4 @@ int main() {
     }
 
     return 0;
-
 }
